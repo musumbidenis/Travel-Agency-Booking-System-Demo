@@ -1,0 +1,259 @@
+<?php 
+session_start();
+
+/* connect to database */
+$db = mysqli_connect('localhost', 'root', 'password', 'travel');
+
+/* variable declaration */
+$firstName = "";
+$surname = "";
+$phone = "";
+$email    = "";
+$role = "";
+$msg = "";
+$errors   = array(); 
+
+
+/* INSERTING DATA INTO DATABASE
+-------------------------------------------------- */
+
+/* call the createUser() function if create_user_btn is clicked */
+if (isset($_POST['create_user_btn'])) {
+	createUser();
+}
+
+/* CREATE USER */
+function createUser(){
+	global $db, $errors;
+ 
+	/* receive all input values from the form. Call the e() function */
+    /* defined below to escape form values */
+	$firstName    =  e($_POST['firstName']);
+    $surname    =  e($_POST['surname']);
+    $phone    =  e($_POST['phone']);
+	$email       =  e($_POST['email']);
+	$password  =  e($_POST['password']);
+	$confirmPassword  =  e($_POST['confirmPassword']);
+	$role = e($_POST['role']);
+
+	/* form validation: ensure that the form is correctly filled */
+	if (empty($firstName)) { 
+		array_push($errors, "First Name is required"); 
+	}
+    if (empty($surname)) { 
+		array_push($errors, "Surname is required"); 
+	}
+    if (empty($phone)) { 
+		array_push($errors, "Phone is required"); 
+	}
+	if (empty($email)) { 
+		array_push($errors, "Email is required"); 
+	}
+	if (empty($password)) { 
+		array_push($errors, "Password is required"); 
+	}
+	if ($password != $confirmPassword) {
+		array_push($errors, "The two passwords do not match");
+	}
+
+	/* register user if there are no errors in the form */
+	if (count($errors) == 0) {
+		$password = md5($password);/* encrypt the password before saving in the database */
+
+        $query = "INSERT INTO users (firstName, surname, phone, email, password, role) 
+                    VALUES('$firstName', '$surname', '$phone', '$email', '$password', '$role')";
+        mysqli_query($db, $query);
+
+        $_SESSION['success']  = "Registration was successfull.";
+        header('location: users.php');
+	}
+}
+
+
+/* checking if user is admin */
+function isAdmin()
+{
+	if (isset($_SESSION['user']) && $_SESSION['user']['role'] == 'admin' ) {
+		return true;
+	}else{
+		return false;
+	}
+}
+
+/* checking if user is accountant */
+function isAccountant()
+{
+	if (isset($_SESSION['user']) && $_SESSION['user']['role'] == 'accountant' ) {
+		return true;
+	}else{
+		return false;
+	}
+}
+
+/* checking if user is logged in */
+function isLoggedIn()
+{
+	if (isset($_SESSION['user'])) {
+		return true;
+	}else{
+		return false;
+	}
+}
+
+
+
+/* call the addPackage() function if add_package_btn is clicked */
+if (isset($_POST['add_package_btn'])) {
+	addPackage();
+}
+
+
+/* ADD PACKAGE */
+function addPackage(){
+	global $db, $errors;
+ 
+	/* receive all input values from the form. Call the e() function */
+    /* defined below to escape form values */
+	$packageType    =  e($_POST['packageType']);
+    $description    =  e($_POST['description']);
+    $amount    =  e($_POST['amount']);
+
+	/* Get image name */
+	$image = $_FILES['image']['name'];
+	/* image file directory */
+	$target = "images/".basename($image);
+
+
+	/* form validation: ensure that the form is correctly filled */
+	if (empty($packageType)) { 
+		array_push($errors, "Choose a package type"); 
+	}
+    if (empty($description)) { 
+		array_push($errors, "Description is required"); 
+	}
+    if (empty($amount)) { 
+		array_push($errors, "Amount is required"); 
+	}
+	if (empty($image)) { 
+		array_push($errors, "Choose an image from files"); 
+	}
+
+	/* add package if there are no errors in the form */
+	if (count($errors) == 0) {
+        $query = "INSERT INTO packages (packageType, description, amount, imageUrl) 
+                    VALUES('$packageType', '$description', '$amount', '$image')";
+        mysqli_query($db, $query);
+
+		if (move_uploaded_file($_FILES['image']['tmp_name'], $target)) {
+			$msg = "Image uploaded successfully";
+		}else{
+			$msg = "Failed to upload image";
+		}
+
+        $_SESSION['success']  = "Added successfully";
+        header('location: packages.php');
+	}
+}
+
+
+/* escape string */
+function e($val){
+	global $db;
+	return mysqli_real_escape_string($db, trim($val));
+}
+
+
+/* displaying errors */
+function display_error() {
+	global $errors;
+
+	if (count($errors) > 0){
+		echo '<div class="error">';
+			foreach ($errors as $error){
+				echo $error .'<br>';
+			}
+		echo '</div>';
+	}
+}	
+
+
+/* FETCHING DATA FROM DATABASE
+-------------------------------------------------- */
+
+/* fetching registered users */
+function users(){
+	global $db, $errors;
+
+	$query = "SELECT * FROM users";
+	$results = mysqli_query($db, $query);
+
+	return $results;
+}
+
+/* fetching packages */
+function packages(){
+	global $db, $errors;
+
+	$query = "SELECT * FROM packages";
+	$results = mysqli_query($db, $query);
+
+	return $results;
+}
+
+/* fetching bookings */
+function bookings(){
+	global $db, $errors;
+
+	$query = ("SELECT users.email, users.phone, packages.packageType, packages.amount, bookings.bookingId, bookings.status, payments.amount as amountPaid FROM payments
+				JOIN bookings ON bookings.checkoutRequestID = payments.checkoutRequestID
+				JOIN packages ON packages.packageId = bookings.packageId
+				JOIN users ON users.userId = bookings.userId"
+			);
+
+	$results = mysqli_query($db, $query);
+
+	return $results;
+}
+
+/* fetching payments */
+function payments(){
+	global $db, $errors;
+
+	$query = ("SELECT users.email, payments.transactionDate, payments.checkoutRequestID, payments.amount, payments.mpesaReceiptNumber, payments.phone FROM payments 
+				JOIN bookings ON bookings.checkoutRequestID = payments.checkoutRequestID
+				JOIN users ON bookings.userId = users.userId"
+			);
+
+	$results = mysqli_query($db, $query);
+
+	return $results;
+}
+
+/* UPDATING DATA IN DATABASE
+-------------------------------------------------- */
+
+/* booking update*/
+if (isset($_GET['update-booking'])) {
+	global $db, $errors;
+
+	$id = $_GET['update-booking'];
+	mysqli_query($db, "UPDATE bookings SET status='cancelled' WHERE bookingId=$id");
+
+	$_SESSION['success'] = "Booking updated"; 
+	header('location: bookings.php');
+}
+
+
+/* DELETING DATA FROM DATABASE
+-------------------------------------------------- */
+
+/* package delete */
+if (isset($_GET['del-package'])) {
+	global $db, $errors;
+
+	$id = $_GET['del-package'];
+	mysqli_query($db, "DELETE FROM packages WHERE packageId=$id");
+
+	$_SESSION['success'] = "Package deleted"; 
+	header('location: packages.php');
+}
