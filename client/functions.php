@@ -250,7 +250,7 @@ function stkPush(){
 	$initiate_url = 'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest';
 	
 	# callback url
-	$CallBackURL = 'https://c37fe65f1422.ngrok.io/supertravel/client/callback_url.php';  
+	$CallBackURL = '../supertravel/client/callback_url.php';  
 
 	/* form validation: ensure that the form is correctly filled */
 	if (empty($PartyA)) { 
