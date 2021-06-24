@@ -180,6 +180,21 @@ function display_error() {
 /* FETCHING DATA FROM DATABASE
 -------------------------------------------------- */
 
+/*  */
+if (isset($_POST['show_bookings'])) {
+	global $db;
+	$firstName    =  e($_POST['firstName']);
+    $surname    =  e($_POST['surname']);
+    $phone    =  e($_POST['phone']);
+
+}
+
+
+
+
+
+
+
 /* fetching registered users */
 function users(){
 	global $db, $errors;
