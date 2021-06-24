@@ -49,6 +49,50 @@ if (!isLoggedIn()) {
                             Bookings
                         </div>
                         <div class="card-body">
+                            <div class="card mb-4">
+                                <div class="card-body">
+                                    <form method="post" action="bookings.php">
+                                        <div class="row border border-light rounded py-2 mb-2">
+                                            <div class="col-12 col-sm-6 col-lg-3">
+                                                <label>Users</label>
+                                                <fieldset class="form-group">
+                                                    <select class="form-control">
+                                                        <option value="*">Any</option>
+                                                    </select>
+                                                </fieldset>
+                                            </div>
+                                            <div class="col-12 col-sm-6 col-lg-3">
+                                                <label>Package Type</label>
+
+                                                <?php $results = packages(); ?>
+
+                                                <fieldset class="form-group">
+                                                    <select name="packageId" name="user" class="form-control">
+                                                        <option value="*">Any</option>
+                                                        <?php while ($row = mysqli_fetch_array($results)) { ?>
+                                                          <option value="<?php echo $row['packageId']; ?>"><?php echo $row['packageType']; ?></option>
+                                                        <?php } ?>
+                                                    </select>
+                                                </fieldset>
+                                            </div>
+                                            <div class="col-12 col-sm-6 col-lg-3">
+                                                <label>Status</label>
+                                                <fieldset class="form-group">
+                                                    <select name="status" class="form-control">
+                                                        <option value="*">Any</option>
+                                                        <option value="cancelled">Cancelled</option>
+                                                        <option value="pending">Pending</option>
+                                                        <option value="complete">Complete</option>
+                                                    </select>
+                                                </fieldset>
+                                            </div>
+                                            <div class="col-12 col-sm-6 col-lg-3 d-flex align-items-center">
+                                                <button class="btn btn-block btn-primary glow" name="show_bookings">Show</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
                             <div class="table-responsive">
                             <?php $results = bookings(); ?>
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
@@ -97,6 +141,9 @@ if (!isLoggedIn()) {
                                     
                                 </table>
                             </div>
+                            <div class="col-12 col-sm-6 col-lg-3 d-flex float-right">
+                                <button class="btn btn-block btn-primary glow">Generate Report</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -125,7 +172,6 @@ if (!isLoggedIn()) {
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
     <script src="js/scripts.js"></script>
-    <script src="js/datatables.js"></script>
     <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
 </body>

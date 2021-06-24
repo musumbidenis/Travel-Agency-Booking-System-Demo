@@ -81,7 +81,7 @@ function login(){
 	$email = e($_POST['email']);
 	$password = e($_POST['password']);
 
-	/* make sure form is filled properly */
+	//* make sure form is filled properly */
 	if (empty($email)) {
 		array_push($errors, "Email is required");
 	}
@@ -250,7 +250,7 @@ function stkPush(){
 	$initiate_url = 'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest';
 	
 	# callback url
-	$CallBackURL = '../supertravel/client/callback_url.php';  
+	$CallBackURL = 'https://51eb468ef2ba.ngrok.io/supertravel/client/message.php';  
 
 	/* form validation: ensure that the form is correctly filled */
 	if (empty($PartyA)) { 
@@ -299,6 +299,7 @@ function stkPush(){
 		curl_setopt($curl, CURLOPT_POSTFIELDS, $data_string);
 		$curl_response = curl_exec($curl);
 
+		echo $curl_response;
 		$response = json_decode($curl_response, true);
 
 		if($response['errorMessage'] == 'Bad Request - Invalid PhoneNumber'){
@@ -323,6 +324,8 @@ function stkPush(){
 			header("location: checkout.php?checkoutRequestID=$checkoutRequestID");
 
 		}else{
+
+			echo $curl_response;
 			
 			array_push($errors, 'An error occurred, Please try again later');
 		
