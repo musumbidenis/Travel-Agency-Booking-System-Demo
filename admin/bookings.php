@@ -42,7 +42,7 @@ if (!isLoggedIn()) {
                             </p>
                         </div>
                     <?php endif ?>
-                    
+
                     <?php $results = bookings(); ?>
                     <div class="card mb-4">
                         <div class="card-header">
@@ -91,8 +91,8 @@ if (!isLoggedIn()) {
                                     </form>
                                     <div class="sb-sidenav-footer">
                     <div class="small">Logged in as:</div>
-                    <?php  if (isset($_SESSION['bookings'])) : ?>
-					<small><?php echo $_SESSION['bookings']['status']; 
+                    <?php  if (isset($_SESSION['bookings_packageType'])) : ?>
+					<small><?php echo $_SESSION['bookings_packageType']; 
 
                     ?></small>
                     <?php endif ?>
@@ -140,7 +140,7 @@ if (!isLoggedIn()) {
                                 </table>
                             </div>
                             <div class="col-12 col-sm-6 col-lg-3 d-flex float-right">
-                            <form action="here.php" method="post">
+                            <form method="post">
                                <button class="btn btn-block btn-primary glow" name="bookings_report">Generate Report</button>
                             </form>
                             </div>
