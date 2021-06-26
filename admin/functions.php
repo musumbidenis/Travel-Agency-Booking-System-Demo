@@ -10,7 +10,6 @@ $surname = "";
 $phone = "";
 $email    = "";
 $role = "";
-$msg = "";
 $errors   = array(); 
 
 
@@ -259,17 +258,6 @@ function bookings(){
 	    $results = mysqli_query($db, $query);
 	}
 
-	// $output = '';
-
-	// while($row = mysqli_fetch_array($results)){       
-	// 	$output .= '<tr>  
-	// 					<td>' .$row["email"].'</td>  
-	// 					<td>'.$row["phone"].'</td>  
-	// 					<td>'.$row["packageType"].'</td>  
-	// 					<td>'.$row["status"].'</td> 
-	// 				</tr>';  
-	// 	}
-
 	session_start();
 	unset($_SESSION['bookings_packageType']);
 	unset($_SESSION['bookings_status']);
@@ -281,7 +269,63 @@ function bookings(){
 
 	
 }
-/**Reports */
+
+/* fetching payments */
+function payments(){
+	global $db, $errors;
+
+	$query = ("SELECT users.email, payments.transactionDate, payments.checkoutRequestID, payments.amount, payments.mpesaReceiptNumber, payments.phone FROM payments 
+				JOIN bookings ON bookings.checkoutRequestID = payments.checkoutRequestID
+				JOIN users ON bookings.userId = users.userId"
+			);
+
+	$results = mysqli_query($db, $query);
+
+	return $results;
+}
+
+
+
+
+
+/* UPDATING DATA IN DATABASE
+-------------------------------------------------- */
+
+/* booking update*/
+if (isset($_GET['update-booking'])) {
+	global $db, $errors;
+
+	$id = $_GET['update-booking'];
+	mysqli_query($db, "UPDATE bookings SET status='cancelled' WHERE bookingId=$id");
+
+	$_SESSION['success'] = "Booking updated"; 
+	header('location: bookings.php');
+}
+
+
+
+
+
+/* DELETING DATA FROM DATABASE
+-------------------------------------------------- */
+
+/* package delete */
+if (isset($_GET['del-package'])) {
+	global $db, $errors;
+
+	$id = $_GET['del-package'];
+	mysqli_query($db, "DELETE FROM packages WHERE packageId=$id");
+
+	$_SESSION['success'] = "Package deleted"; 
+	header('location: packages.php');
+}
+
+
+
+
+/* GENERATING REPORTS
+-------------------------------------------------- */
+/** Booking Reports */
 
 if (isset($_POST['bookings_report'])) {
 	global $db;
@@ -351,8 +395,8 @@ if (isset($_POST['bookings_report'])) {
       $content = '';  
       $content .= '  
       <h3 align="center">Bookings Data for Super Travel Agency</h3><br /><br />  
-      <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0"> 
-           <tr>  
+      <table cellspacing="0" cellpadding="3" border="1" style="border-color:gray;"> 
+           <tr style="background-color:green;color:white;">  
                 <th>Email</th>  
                 <th>Phone</th>  
                 <th>Package Type</th>  
@@ -363,49 +407,4 @@ if (isset($_POST['bookings_report'])) {
       $content .= '</table>';  
       $obj_pdf->writeHTML($content);  
       $obj_pdf->Output('bookings.pdf', 'I');
-}
-
-
-
-/* fetching payments */
-function payments(){
-	global $db, $errors;
-
-	$query = ("SELECT users.email, payments.transactionDate, payments.checkoutRequestID, payments.amount, payments.mpesaReceiptNumber, payments.phone FROM payments 
-				JOIN bookings ON bookings.checkoutRequestID = payments.checkoutRequestID
-				JOIN users ON bookings.userId = users.userId"
-			);
-
-	$results = mysqli_query($db, $query);
-
-	return $results;
-}
-
-/* UPDATING DATA IN DATABASE
--------------------------------------------------- */
-
-/* booking update*/
-if (isset($_GET['update-booking'])) {
-	global $db, $errors;
-
-	$id = $_GET['update-booking'];
-	mysqli_query($db, "UPDATE bookings SET status='cancelled' WHERE bookingId=$id");
-
-	$_SESSION['success'] = "Booking updated"; 
-	header('location: bookings.php');
-}
-
-
-/* DELETING DATA FROM DATABASE
--------------------------------------------------- */
-
-/* package delete */
-if (isset($_GET['del-package'])) {
-	global $db, $errors;
-
-	$id = $_GET['del-package'];
-	mysqli_query($db, "DELETE FROM packages WHERE packageId=$id");
-
-	$_SESSION['success'] = "Package deleted"; 
-	header('location: packages.php');
 }
