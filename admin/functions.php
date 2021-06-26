@@ -180,21 +180,6 @@ function display_error() {
 /* FETCHING DATA FROM DATABASE
 -------------------------------------------------- */
 
-/*  */
-if (isset($_POST['show_bookings'])) {
-	global $db;
-	$firstName    =  e($_POST['firstName']);
-    $surname    =  e($_POST['surname']);
-    $phone    =  e($_POST['phone']);
-
-}
-
-
-
-
-
-
-
 /* fetching registered users */
 function users(){
 	global $db, $errors;
@@ -217,18 +202,78 @@ function packages(){
 
 /* fetching bookings */
 function bookings(){
-	global $db, $errors;
+	global $db;
 
-	$query = ("SELECT users.email, users.phone, packages.packageType, packages.amount, bookings.bookingId, bookings.status, payments.amount as amountPaid FROM payments
-				JOIN bookings ON bookings.checkoutRequestID = payments.checkoutRequestID
+	if (isset($_POST['show_bookings'])) {
+		
+		$packageType    =  $_POST['packageType'];
+		$status    =  $_POST['status'];
+	
+		if ($packageType == 'any' && $status != 'any' ) {
+			$query = ("SELECT users.email, users.phone, packages.packageType, packages.amount, bookings.bookingId, bookings.status FROM users
+			    JOIN bookings ON bookings.userId = users.userId
 				JOIN packages ON packages.packageId = bookings.packageId
-				JOIN users ON users.userId = bookings.userId"
-			);
+				WHERE bookings.status='$status'");
 
-	$results = mysqli_query($db, $query);
+            $results = mysqli_query($db, $query);
+			
+		} else if($packageType != 'any' && $status == 'any') {
+			$query = ("SELECT users.email, users.phone, packages.packageType, packages.amount, bookings.bookingId, bookings.status FROM users
+				JOIN bookings ON bookings.userId = users.userId
+				JOIN packages ON packages.packageId = bookings.packageId
+				WHERE packages.packageType='$packageType'");
+
+            $results = mysqli_query($db, $query); 
+
+		} else if($packageType != 'any' && $status != 'any') {
+			$query = ("SELECT users.email, users.phone, packages.packageType, packages.amount, bookings.bookingId, bookings.status FROM users
+				JOIN bookings ON bookings.userId = users.userId
+				JOIN packages ON packages.packageId = bookings.packageId
+				WHERE packages.packageType='$packageType'
+				AND bookings.status='$status'");
+
+            $results = mysqli_query($db, $query); 
+		}else{
+			$query = ("SELECT users.email, users.phone, packages.packageType, packages.amount, bookings.bookingId, bookings.status FROM users
+				JOIN bookings ON bookings.userId = users.userId
+				JOIN packages ON packages.packageId = bookings.packageId");
+
+			$results = mysqli_query($db, $query);
+		}
+	
+	}else{
+
+		$query = ("SELECT users.email, users.phone, packages.packageType, packages.amount, bookings.bookingId, bookings.status FROM users
+			JOIN bookings ON bookings.userId = users.userId
+			JOIN packages ON packages.packageId = bookings.packageId");
+		
+		// $query = ("SELECT users.email, users.phone, packages.packageType, packages.amount, bookings.bookingId, bookings.status, payments.amount as amountPaid FROM payments
+		// 			JOIN bookings ON bookings.checkoutRequestID = payments.checkoutRequestID
+		// 			JOIN packages ON packages.packageId = bookings.packageId
+		// 			JOIN users ON users.userId = bookings.userId"
+		// 		);
+
+	    $results = mysqli_query($db, $query);
+	}
+
+	session_start();
+	unset($_SESSION['bookings']);/* remove $_SESSION['name'] */
+	session_regenerate_id();/* Copies all other session variables on to new id */
+	$_SESSION['bookings']  = mysqli_fetch_array($results); /* Create new session variable 'name' */
 
 	return $results;
+
+	
 }
+/**Reports */
+
+if (isset($_POST['bookings_report'])) {
+	$row =  $_SESSION['bookings'];
+
+	echo $row['email'];
+}
+
+
 
 /* fetching payments */
 function payments(){

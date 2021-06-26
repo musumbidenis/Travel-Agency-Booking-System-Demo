@@ -42,7 +42,8 @@ if (!isLoggedIn()) {
                             </p>
                         </div>
                     <?php endif ?>
-
+                    
+                    <?php $results = bookings(); ?>
                     <div class="card mb-4">
                         <div class="card-header">
                             <i class="fas fa-table mr-1"></i>
@@ -57,21 +58,18 @@ if (!isLoggedIn()) {
                                                 <label>Users</label>
                                                 <fieldset class="form-group">
                                                     <select class="form-control">
-                                                        <option value="*">Any</option>
+                                                        <option value="">Any</option>
                                                     </select>
                                                 </fieldset>
                                             </div>
                                             <div class="col-12 col-sm-6 col-lg-3">
                                                 <label>Package Type</label>
-
-                                                <?php $results = packages(); ?>
-
                                                 <fieldset class="form-group">
-                                                    <select name="packageId" name="user" class="form-control">
-                                                        <option value="*">Any</option>
-                                                        <?php while ($row = mysqli_fetch_array($results)) { ?>
-                                                          <option value="<?php echo $row['packageId']; ?>"><?php echo $row['packageType']; ?></option>
-                                                        <?php } ?>
+                                                    <select name="packageType" name="user" class="form-control">
+                                                        <option value="any">Any</option>
+                                                          <option value="beach holiday">Beach Holiday</option>
+                                                          <option value="family holiday">Family Holiday</option>
+                                                          <option value="honeymoon">Honeymoon</option>
                                                     </select>
                                                 </fieldset>
                                             </div>
@@ -79,7 +77,7 @@ if (!isLoggedIn()) {
                                                 <label>Status</label>
                                                 <fieldset class="form-group">
                                                     <select name="status" class="form-control">
-                                                        <option value="*">Any</option>
+                                                        <option value="any">Any</option>
                                                         <option value="cancelled">Cancelled</option>
                                                         <option value="pending">Pending</option>
                                                         <option value="complete">Complete</option>
@@ -91,18 +89,23 @@ if (!isLoggedIn()) {
                                             </div>
                                         </div>
                                     </form>
+                                    <div class="sb-sidenav-footer">
+                    <div class="small">Logged in as:</div>
+                    <?php  if (isset($_SESSION['bookings'])) : ?>
+					<small><?php echo $_SESSION['bookings']['status']; 
+
+                    ?></small>
+                    <?php endif ?>
+                </div>
                                 </div>
                             </div>
                             <div class="table-responsive">
-                            <?php $results = bookings(); ?>
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                     <thead>
                                         <tr>
                                             <th>Email</th>
                                             <th>Phone Number</th>
                                             <th>Package Type</th>
-                                            <th>Package Charges</th>
-                                            <th>Amount Paid</th>
                                             <th>Status</th>
                                             <th>Actions</th>
                                         </tr>
@@ -112,24 +115,19 @@ if (!isLoggedIn()) {
                                             <th>Email</th>
                                             <th>Phone Number</th>
                                             <th>Package Type</th>
-                                            <th>Package Charges</th>
-                                            <th>Amount Paid</th>
                                             <th>Status</th>
                                             <th>Actions</th>
                                         </tr>
                                     </tfoot>
 
                                     <?php while ($row = mysqli_fetch_array($results)) { ?>
-
                                     <tbody>
                                         <tr>
                                             <td><?php echo $row['email']; ?></td>
                                             <td><?php echo $row['phone']; ?></td>
                                             <td><?php echo $row['packageType']; ?></td>
-                                            <td><?php echo $row['amount']; ?></td>
-                                            <td><?php echo $row['amountPaid']; ?></td>
                                             <td><?php echo $row['status']; ?></td>
-                                            <?php if($row['status'] == 'cancelled') { ?>
+                                            <?php if($row['status'] == 'cancelled' || $row['status'] == 'pending') { ?>
                                                 <td><button type="button" class="btn btn-sm btn-danger" disabled>Cancel</button></td>
                                             <?php } else { ?>
                                                 <td><a href="bookings.php?update-booking=<?php echo $row['bookingId'];?>" onclick="return confirm('Are you sure you want to update this entry?')"  type="button" class="btn btn-sm btn-danger">Cancel</a></td>
@@ -142,7 +140,9 @@ if (!isLoggedIn()) {
                                 </table>
                             </div>
                             <div class="col-12 col-sm-6 col-lg-3 d-flex float-right">
-                                <button class="btn btn-block btn-primary glow">Generate Report</button>
+                            <form action="here.php" method="post">
+                               <button class="btn btn-block btn-primary glow" name="bookings_report">Generate Report</button>
+                            </form>
                             </div>
                         </div>
                     </div>
