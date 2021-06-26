@@ -325,8 +325,8 @@ if (isset($_GET['del-package'])) {
 
 /* GENERATING REPORTS
 -------------------------------------------------- */
-/** Booking Reports */
 
+/** Booking Reports */
 if (isset($_POST['bookings_report'])) {
 	global $db;
 

@@ -89,14 +89,6 @@ if (!isLoggedIn()) {
                                             </div>
                                         </div>
                                     </form>
-                                    <div class="sb-sidenav-footer">
-                    <div class="small">Logged in as:</div>
-                    <?php  if (isset($_SESSION['bookings_packageType'])) : ?>
-					<small><?php echo $_SESSION['bookings_packageType']; 
-
-                    ?></small>
-                    <?php endif ?>
-                </div>
                                 </div>
                             </div>
                             <div class="table-responsive">
@@ -140,9 +132,9 @@ if (!isLoggedIn()) {
                                 </table>
                             </div>
                             <div class="col-12 col-sm-6 col-lg-3 d-flex float-right">
-                            <form method="post">
-                               <button class="btn btn-block btn-primary glow" name="bookings_report">Generate Report</button>
-                            </form>
+                                <form method="post">
+                                  <button class="btn btn-block btn-primary glow" name="bookings_report">Generate Report</button>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -172,6 +164,7 @@ if (!isLoggedIn()) {
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
     <script src="js/scripts.js"></script>
+    <script src="js/datatables.js"></script>
     <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
 </body>

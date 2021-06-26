@@ -80,7 +80,7 @@
 
             <div class="card-body">
               <p class="card-text"><?php echo $row['description']; ?></p>
-              <a href="../client/booking.php" class="float-right btn btn-sm btn-outline-secondary">Book Now</a>
+              <a href="../client/booking.php?packageId=<?php echo $row['packageId'];?>" class="float-right btn btn-sm btn-outline-secondary">Book Now</a>
               <strong>Kshs. <?php echo $row['amount']; ?></strong>
             </div>
           </div>
