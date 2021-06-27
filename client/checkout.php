@@ -79,7 +79,7 @@ if (!isLoggedIn()) {
                 clearInterval(interval);
 
                 alert('Payment was successful');
-                window.location.href = 'index.php';
+                window.location.href = 'myBookings.php';
 
               }else{
 

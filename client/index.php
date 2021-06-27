@@ -54,6 +54,7 @@
     <a class="py-4 px-4 d-none d-md-inline-block" href="#">About</a>
     <a class="py-4 px-4 d-none d-md-inline-block" href="#packages">Packages</a>
     <a class="py-4 pe-5 ps-4 d-none d-md-inline-block" href="#">Contact</a>
+    <a class="py-4 pe-5 ps-4 d-none d-md-inline-block" href="myBookings.php">My Bookings</a>
 
     <?php if($_SESSION['user']) { ?>
       <a class="py-4 ps-5 d-none d-md-inline-block" class="btn btn-sm btn-outline-secondary" href="../client/index.php?logout">Logout</a>
@@ -79,7 +80,7 @@
           <div class="carousel-caption text-start">
             <h1>Super Travel Agency</h1>
             <p>Your preffered tour agency. Quality and affordable rates just for you. <br> Book with us today for exclusive packages.</p>
-            <p><a class="btn btn-lg btn-primary" href="#">Book Now</a></p>
+            <p><a class="btn btn-lg btn-primary" href="#packages">Book Now</a></p>
           </div>
         </div>
       </div>

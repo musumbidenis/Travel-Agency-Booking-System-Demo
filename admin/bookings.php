@@ -122,7 +122,7 @@ if (!isLoggedIn()) {
                                             <?php if($row['status'] == 'cancelled' || $row['status'] == 'pending') { ?>
                                                 <td><button type="button" class="btn btn-sm btn-danger" disabled>Cancel</button></td>
                                             <?php } else { ?>
-                                                <td><a href="bookings.php?update-booking=<?php echo $row['bookingId'];?>" onclick="return confirm('Are you sure you want to update this entry?')"  type="button" class="btn btn-sm btn-danger">Cancel</a></td>
+                                                <td><a href="bookings.php?update-booking=<?php echo $row['bookingId'];?>" onclick="return confirm('Are you sure you want to cancel this booking?')"  type="button" class="btn btn-sm btn-danger">Cancel</a></td>
                                             <?php } ?>
                                         </tr>
                                     </tbody>

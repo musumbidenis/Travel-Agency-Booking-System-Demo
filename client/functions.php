@@ -151,6 +151,21 @@ function display_error() {
 
 /* FETCHING DATA FROM DATABASE
 -------------------------------------------------- */
+/* fetching my bookings */
+function myBookings(){
+	global $db;
+
+	$userId = $_SESSION['user']['userId'];
+
+	$query = ("SELECT packages.packageType, packages.description, bookings.bookingId, bookings.status FROM users
+			JOIN bookings ON bookings.userId = users.userId
+			JOIN packages ON packages.packageId = bookings.packageId
+			WHERE bookings.userId='$userId'");
+
+	$results = mysqli_query($db, $query);
+
+	return $results;
+}
 
 /* fetching packages */
 function packages(){
@@ -197,6 +212,24 @@ if (isset($_POST['checkoutRequestID'])) {
 		echo json_encode('0 results');
 	}
 }
+
+
+
+/* UPDATING DATA IN DATABASE
+-------------------------------------------------- */
+
+/* booking update*/
+if (isset($_GET['update-booking'])) {
+	global $db, $errors;
+
+	$id = $_GET['update-booking'];
+	mysqli_query($db, "UPDATE bookings SET status='cancelled' WHERE bookingId=$id");
+
+	$_SESSION['success'] = "Booking cancelled. Get in touch with our offices for a reversal of booking charges"; 
+	header('location: myBookings.php');
+}
+
+
 
 
 /* MPESA payments
